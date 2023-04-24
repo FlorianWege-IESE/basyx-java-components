@@ -33,6 +33,7 @@ import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregatorFactory;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
+import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPIFactory;
 
 /**
  * 
@@ -47,6 +48,7 @@ public class MongoDBAASAggregatorFactory implements IAASAggregatorFactory {
 	private IAASRegistry registry;
 	private IAASAPIFactory aasAPIFactory;
 	private ISubmodelAggregatorFactory submodelAggregatorFactory;
+	private ISubmodelAPIFactory submodelAPIFactory;
 	private String resourceConfigPath;
 	private MongoClient client;
 
@@ -90,10 +92,27 @@ public class MongoDBAASAggregatorFactory implements IAASAggregatorFactory {
 		this.client = client;
 	}
 
+	public MongoDBAASAggregatorFactory(BaSyxMongoDBConfiguration config, IAASRegistry registry, IAASAPIFactory aasAPIFactory, ISubmodelAggregatorFactory submodelAggregatorFactory, ISubmodelAPIFactory submodelAPIFactory, MongoClient client) {
+		this.config = config;
+		this.registry = registry;
+		this.aasAPIFactory = aasAPIFactory;
+		this.submodelAggregatorFactory = submodelAggregatorFactory;
+		this.submodelAPIFactory = submodelAPIFactory;
+		this.client = client;
+	}
+
 	public MongoDBAASAggregatorFactory(BaSyxMongoDBConfiguration config, IAASAPIFactory aasAPIFactory, ISubmodelAggregatorFactory submodelAggregatorFactory, MongoClient client) {
 		this.config = config;
 		this.aasAPIFactory = aasAPIFactory;
 		this.submodelAggregatorFactory = submodelAggregatorFactory;
+		this.client = client;
+	}
+
+	public MongoDBAASAggregatorFactory(BaSyxMongoDBConfiguration config, IAASAPIFactory aasAPIFactory, ISubmodelAggregatorFactory submodelAggregatorFactory, ISubmodelAPIFactory submodelAPIFactory, MongoClient client) {
+		this.config = config;
+		this.aasAPIFactory = aasAPIFactory;
+		this.submodelAggregatorFactory = submodelAggregatorFactory;
+		this.submodelAPIFactory = submodelAPIFactory;
 		this.client = client;
 	}
 
@@ -105,6 +124,15 @@ public class MongoDBAASAggregatorFactory implements IAASAggregatorFactory {
 		this.client = client;
 	}
 
+	public MongoDBAASAggregatorFactory(String resourceConfigPath, IAASRegistry registry, IAASAPIFactory aasAPIFactory, ISubmodelAggregatorFactory submodelAggregatorFactory, ISubmodelAPIFactory submodelAPIFactory, MongoClient client) {
+		this.resourceConfigPath = resourceConfigPath;
+		this.registry = registry;
+		this.aasAPIFactory = aasAPIFactory;
+		this.submodelAggregatorFactory = submodelAggregatorFactory;
+		this.submodelAPIFactory = submodelAPIFactory;
+		this.client = client;
+	}
+
 	public MongoDBAASAggregatorFactory(String resourceConfigPath, IAASAPIFactory aasAPIFactory, ISubmodelAggregatorFactory submodelAggregatorFactory, MongoClient client) {
 		this.resourceConfigPath = resourceConfigPath;
 		this.aasAPIFactory = aasAPIFactory;
@@ -112,20 +140,36 @@ public class MongoDBAASAggregatorFactory implements IAASAggregatorFactory {
 		this.client = client;
 	}
 
+	public MongoDBAASAggregatorFactory(String resourceConfigPath, IAASAPIFactory aasAPIFactory, ISubmodelAggregatorFactory submodelAggregatorFactory, ISubmodelAPIFactory submodelAPIFactory, MongoClient client) {
+		this.resourceConfigPath = resourceConfigPath;
+		this.aasAPIFactory = aasAPIFactory;
+		this.submodelAggregatorFactory = submodelAggregatorFactory;
+		this.submodelAPIFactory = submodelAPIFactory;
+		this.client = client;
+	}
+
 	public MongoDBAASAggregatorFactory(IAASAPIFactory aasAPIFactory, ISubmodelAggregatorFactory submodelAggregatorFactory, MongoClient client) {
 		this(BaSyxMongoDBConfiguration.DEFAULT_CONFIG_PATH, aasAPIFactory, submodelAggregatorFactory);
+	}
+
+	public MongoDBAASAggregatorFactory(IAASAPIFactory aasAPIFactory, ISubmodelAggregatorFactory submodelAggregatorFactory, ISubmodelAPIFactory submodelAPIFactory, MongoClient client) {
+		this.resourceConfigPath = resourceConfigPath;
+		this.aasAPIFactory = aasAPIFactory;
+		this.submodelAggregatorFactory = submodelAggregatorFactory;
+		this.submodelAPIFactory = submodelAPIFactory;
+		this.client = MongoClients.create(config.getConnectionUrl());
 	}
 
 	@Override
 	public IAASAggregator create() {
 		if (this.config != null && this.registry != null) {
-			return new MongoDBAASAggregator(this.config, this.registry, this.aasAPIFactory, this.submodelAggregatorFactory, this.client);
+			return new MongoDBAASAggregator(this.config, this.registry, this.aasAPIFactory, this.submodelAggregatorFactory, this.submodelAPIFactory, this.client);
 		} else if (this.config != null) {
-			return new MongoDBAASAggregator(this.config, this.aasAPIFactory, this.submodelAggregatorFactory, this.client);
+			return new MongoDBAASAggregator(this.config, this.aasAPIFactory, this.submodelAggregatorFactory, this.submodelAPIFactory, this.client);
 		} else if (this.resourceConfigPath != null && this.registry != null) {
-			return new MongoDBAASAggregator(this.resourceConfigPath, this.registry, this.aasAPIFactory, this.submodelAggregatorFactory, this.client);
+			return new MongoDBAASAggregator(this.resourceConfigPath, this.registry, this.aasAPIFactory, this.submodelAggregatorFactory, this.submodelAPIFactory, this.client);
 		} else {
-			return new MongoDBAASAggregator(this.resourceConfigPath, this.aasAPIFactory, this.submodelAggregatorFactory, this.client);
+			return new MongoDBAASAggregator(this.resourceConfigPath, this.aasAPIFactory, this.submodelAggregatorFactory, this.submodelAPIFactory, this.client);
 		}
 	}
 

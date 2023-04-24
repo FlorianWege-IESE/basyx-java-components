@@ -85,4 +85,9 @@ public class MongoDBAASServerComponentFactory extends AbstractAASServerComponent
 	protected IAASAggregatorFactory createAASAggregatorFactory(IAASAPIFactory aasAPIFactory, ISubmodelAggregatorFactory submodelAggregatorFactory) {
 		return new MongoDBAASAggregatorFactory(mongoDBConfig, aasServerRegistry, aasAPIFactory, submodelAggregatorFactory, client);
 	}
+
+	@Override
+	protected IAASAggregatorFactory createAASAggregatorFactory(IAASAPIFactory aasAPIFactory, ISubmodelAggregatorFactory submodelAggregatorFactory, ISubmodelAPIFactory submodelAPIFactory) {
+		return new MongoDBAASAggregatorFactory(mongoDBConfig, aasServerRegistry, aasAPIFactory, submodelAggregatorFactory, submodelAPIFactory, client);
+	}
 }

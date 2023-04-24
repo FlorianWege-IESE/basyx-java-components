@@ -46,7 +46,12 @@ public abstract class AbstractAASServerComponentFactory implements IAASServerCom
 
 		IAASAPIFactory aasAPIFactory = createAndDecorateAASAPIFactory();
 
-		IAASAggregatorFactory aasAggregatorFactory = createAndDecorateAASAggregatorFactory(aasAPIFactory, submodelAggregatorFactory);
+		IAASAggregatorFactory aasAggregatorFactory;
+		if (submodelAPIFactory != null) {
+			aasAggregatorFactory = createAndDecorateAASAggregatorFactory(aasAPIFactory, submodelAggregatorFactory, submodelAPIFactory);
+		} else {
+			aasAggregatorFactory = createAndDecorateAASAggregatorFactory(aasAPIFactory, submodelAggregatorFactory, null);
+		}
 
 		return aasAggregatorFactory.create();
 	}
@@ -78,8 +83,14 @@ public abstract class AbstractAASServerComponentFactory implements IAASServerCom
 		return aasAPIFactory;
 	}
 
-	private IAASAggregatorFactory createAndDecorateAASAggregatorFactory(IAASAPIFactory aasAPIFactory, ISubmodelAggregatorFactory submodelAggregatorFactory) {
-		IAASAggregatorFactory aasAggregatorFactory = createAASAggregatorFactory(aasAPIFactory, submodelAggregatorFactory);
+	private IAASAggregatorFactory createAndDecorateAASAggregatorFactory(IAASAPIFactory aasAPIFactory, ISubmodelAggregatorFactory submodelAggregatorFactory, ISubmodelAPIFactory submodelAPIFactory) {
+		IAASAggregatorFactory aasAggregatorFactory;
+		if (submodelAPIFactory != null) {
+			aasAggregatorFactory = createAASAggregatorFactory(aasAPIFactory, submodelAggregatorFactory, submodelAPIFactory);
+		} else {
+			aasAggregatorFactory = createAASAggregatorFactory(aasAPIFactory, submodelAggregatorFactory);
+		}
+
 		for (IAASServerDecorator aasServerDecorator : aasServerDecorators) {
 			aasAggregatorFactory = aasServerDecorator.decorateAASAggregatorFactory(aasAggregatorFactory);
 		}
@@ -93,5 +104,11 @@ public abstract class AbstractAASServerComponentFactory implements IAASServerCom
 
 	protected abstract IAASAPIFactory createAASAPIFactory();
 
+	@Deprecated
 	protected abstract IAASAggregatorFactory createAASAggregatorFactory(IAASAPIFactory aasAPIFactory, ISubmodelAggregatorFactory submodelAggregatorFactory);
+
+	// TODO: make this abstract in new major version
+	protected IAASAggregatorFactory createAASAggregatorFactory(IAASAPIFactory aasAPIFactory, ISubmodelAggregatorFactory submodelAggregatorFactory, ISubmodelAPIFactory submodelAPIFactory) {
+		return createAASAggregatorFactory(aasAPIFactory, submodelAggregatorFactory);
+	}
 }
